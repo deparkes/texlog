@@ -11,6 +11,12 @@ software.
 For it to work, you have to be able to type and 'texcount -inc <yourfile>'
 and it to work.
 
+Sections such as chapters, introduction, etc. need to be in their own folder,
+other wise this will likely crash.
+
+The output is a text file of the various texcount outputs for each file, and
+the total for the whole document.
+
 TODO:
     - Automatically plot with matplotlib?
     - Have command line capability: input file, output file, optparser
@@ -23,9 +29,7 @@ TODO:
 from datetime import datetime
 import os
 import subprocess
-import re
 
-#
 class section(object):
     def __init__(self,filename):
         self.filename = filename
@@ -40,7 +44,8 @@ class section(object):
         for line in self.data:
             try:
                 (heading, value) = line.split(':')
-                headers.append(heading)
+                print heading
+                headers.append(heading.replace(',',''))
                 values.append(value)
             except Exception as e:
                 print "Problem with ", line
@@ -77,7 +82,6 @@ def get_tex_total(countfile):
     FilesTotalLineLimit = 0    
     extract1 = False
     extract2 = False
-    block_of_lines = []
     ExtractList = []
 #    with open(countfile) as input_data:
     # Skips text before the beginning of the interesting block:
@@ -105,8 +109,7 @@ def get_tex_total(countfile):
             (label, filename) = line.split(':')
             filename = 'Total'
             ExtractSection = section(filename)
-#            print ExtractSection.filename
-            
+#            print ExtractSection.filename            
         if extract2:
 #            print line
             ExtractSection.data.append(line.strip())  # Line is extracted (or block_of_lines.append(line), etc.)
@@ -145,6 +148,4 @@ os.chdir(folder)
 if not os.path.exists(output_folder):
     os.mkdir(output_folder)
     
-#run_texcount(folder, tex_file)
-#countfile = "Z:\\Backup\\thesis\\texcount_output.txt"
 logger(folder, tex_file, output_folder)
