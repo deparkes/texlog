@@ -8,8 +8,10 @@ Use the output from texcount to log how many words written on a latex document.
 Output to a simple text file that can be plotted with your favourite plotting
 software.
 
+For it to work, you have to be able to type and 'texcount -inc <yourfile>'
+and it to work.
+
 TODO:
-    - Capture output from texcount run
     - Automatically plot with matplotlib?
     - Have command line capability: input file, output file, optparser
     - Option to store more than just the total
@@ -21,16 +23,37 @@ TODO:
 from datetime import datetime
 import os
 import subprocess
-#
-#class section:
-#    def __init__(self):
+import re
 
+#
+class section(object):
+    def __init__(self,filename):
+        self.filename = filename
+        self.block_of_lines = []
+        self.data = []
+        self.time_stamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+    
+    
+    def get_data(self):
+        headers = ['Date']
+        values = [self.time_stamp]
+        for line in self.data:
+            try:
+                (heading, value) = line.split(':')
+                headers.append(heading)
+                values.append(value)
+            except Exception as e:
+                print "Problem with ", line
+                print "Error:", e    
+        return (headers,values)
+    
+    
 def run_texcount(folder, texfile):
     """ Run texcount on a specified file in a specified directory.
         Output the standard texcount output
     """
     texcount = []
-    os.chdir(folder)
+
     print os.getcwd()
     tex_count_command = "texcount -inc " + texfile
     print "Running: ", tex_count_command
@@ -45,6 +68,8 @@ def run_texcount(folder, texfile):
         break
     
     return texcount
+    
+    
 def get_tex_total(countfile):
     """ Extract relevant section of the texcount output.
         I couldn't figure out how to do exactly what I """
@@ -53,6 +78,7 @@ def get_tex_total(countfile):
     extract1 = False
     extract2 = False
     block_of_lines = []
+    ExtractList = []
 #    with open(countfile) as input_data:
     # Skips text before the beginning of the interesting block:
     for line in countfile:
@@ -60,81 +86,65 @@ def get_tex_total(countfile):
 #        type(line)
 
         if "Included file:" in line.strip()[:20]:  # Or whatever test is needed
-            extract1 = True       
+            extract1 = True     
+            (label, filename) = line.split(':')
+            filename = os.path.dirname(filename).replace(' ./','')
+            ExtractSection = section(filename)
+#            print ExtractSection.filename            
         if extract1:
-            print line
+#            print line
+            ExtractSection.data.append(line.strip())  # Line is extracted (or block_of_lines.append(line), etc.)
             IncludedLineLimit +=1 
         if IncludedLineLimit > 8:
             extract1 = False
             IncludedLineLimit = 0
-            
+            ExtractList.append(ExtractSection)  
+        
         if "File(s) total:" in line.strip()[:20]:
-            extract2 = True       
+            extract2 = True   
+            (label, filename) = line.split(':')
+            filename = 'Total'
+            ExtractSection = section(filename)
+#            print ExtractSection.filename
+            
         if extract2:
-            print line
+#            print line
+            ExtractSection.data.append(line.strip())  # Line is extracted (or block_of_lines.append(line), etc.)
             FilesTotalLineLimit +=1 
         if FilesTotalLineLimit > 8:
             extract2 = False
             FilesTotalLineLimit = 0              
-            
-#            if "Words in text" in line.strip()[:20]:
-##            print line
-#                extract = True
-#            if 'Number of math displayed'  in line.strip()[:26]:
-#                extract = False
-#            elif extract:
-#                print line
-##            if not "total" in line.strip():
-#                block_of_lines.append(line.strip())  # Line is extracted (or block_of_lines.append(line), etc.)
-#        else:
-#            break
-    return block_of_lines
-    
-def logger(folder, tex_file):
+            ExtractList.append(ExtractSection)      
 
+    return ExtractList
     
-    time_stamp = datetime.now().strftime("%Y-%m-%d %H:%M")
-#    if os.path.isfile(countfile):
-#        with open(countfile) as input_data:
-#            for line in input_data:
-#                texcount.append(line.rstrip())
-#    else:
+def logger(folder, tex_file, output_folder):
+
     texcount = run_texcount(folder, tex_file)
-    block_of_lines = get_tex_total(texcount)
-            
-    #print block_of_lines
-    
-    headers = ['Date']
-    values = [time_stamp]
-    
-#    print time_stamp
-    
-    for line in block_of_lines:
-        print line
-        try:
-            (heading, value) = line.split(':')
-            headers.append(heading)
-            values.append(value)
-        except Exception as e:
-            print "Problem with ", line
-            print "Error:", e
-    
-    #print headers
-#    print values
-    
-    
-    output_file = "output.txt"
-    with open(output_file,"a") as f:
-        if os.stat(output_file).st_size == 0:
-            f.writelines(",".join(map(str, headers)))
+    ExtractList = get_tex_total(texcount)
+
+    print "Sections found:"    
+    for section in ExtractList:
+        print section.filename
+        (headers, values) = section.get_data()
+        output_file = output_folder + '/' + section.filename + '.txt'
+        with open(output_file,"a") as f:
+            if os.stat(output_file).st_size == 0:
+                f.writelines(",".join(map(str, headers)))
+                f.writelines(",".join('\n'))            
+            f.writelines(",".join(map(str, values)))
             f.writelines(",".join('\n'))
-            
-        f.writelines(",".join(map(str, values)))
-        f.writelines(",".join('\n'))
 
 
 tex_file = "thesis.tex"
 folder = "Z:\\Backup\\thesis"
+output_folder = "./Logging"
+
+os.chdir(folder)
+
+if not os.path.exists(output_folder):
+    os.mkdir(output_folder)
+    
 #run_texcount(folder, tex_file)
 #countfile = "Z:\\Backup\\thesis\\texcount_output.txt"
-logger(folder, tex_file)
+logger(folder, tex_file, output_folder)

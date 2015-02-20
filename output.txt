@@ -1,2 +1,0 @@
-Date,Words in text,Words in headers,Words outside text (captions, etc.),Number of headers,Number of floats/tables/figures,Number of math inlines,Number of math displayed,Files
-2015-02-20 12:06, 15691, 282, 716, 109, 47, 356, 38, 9
