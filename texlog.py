@@ -18,7 +18,7 @@ The output is a text file of the various texcount outputs for each file, and
 the total for the whole document.
 
 TODO:
-    - Automatically plot with matplotlib?
+    + Automatically plot with matplotlib? - see thesisplotter.py
     - Have command line capability: input file, output file, optparser
     - Option to store more than just the total
     
@@ -140,7 +140,7 @@ def logger(folder, tex_file, output_folder):
 
 
 tex_file = "thesis.tex"
-folder = "Z:\\Backup\\thesis"
+folder = os.path.dirname(os.path.realpath(__file__))
 output_folder = "./Logging"
 
 os.chdir(folder)
