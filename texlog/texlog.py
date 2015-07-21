@@ -23,6 +23,8 @@ TODO:
 from datetime import datetime
 import os
 import subprocess
+import argparse
+import ConfigParser
 
 def main():
     """
@@ -30,13 +32,21 @@ def main():
     Output to a simple text file that can be plotted with your favourite plotting
     software.
     Looks for file "thesis.tex" in the directory containing texlog.py
-    
+ 
     Output data files to "./Logging"
     """
-
-    tex_file = "thesis.tex"
-    folder = os.path.dirname(os.path.realpath(__file__))
-    output_folder = "./Logging"
+    parser = argparse.ArgumentParser(description='Log word count of tex files.')
+    parser.add_argument('tex_file', nargs='?', default="thesis.tex", action='store',
+                       help='Target tex file (default = thesis.tex)')
+    parser.add_argument('--log', dest='output_folder', default="./Logging", 
+                        help='specify output directory (default = INPUT_FOLDER/Logging)')
+    parser.add_argument('--dir', dest='input_folder', 
+                        default=os.path.dirname(os.path.realpath(__file__)), 
+                        help='specify input directory (default = current directory)')                        
+    args = vars(parser.parse_args())
+    tex_file = args['tex_file']
+    folder = args['input_folder']
+    output_folder = args['output_folder']
 
     os.chdir(folder)
 
@@ -88,12 +98,12 @@ def run_texcount(folder, texfile):
 #    subprocess.call(tex_count_command, shell=True)
     proc = subprocess.Popen(tex_count_command, stdout=subprocess.PIPE)
     while True:
-      line = proc.stdout.readline()
-      if line != '':
+        line = proc.stdout.readline()
+        if line != '':
         #the real code does filtering here
-        texcount.append(line.rstrip())
-      else:
-        break
+            texcount.append(line.rstrip())
+        else:
+            break
 
     return texcount
 
