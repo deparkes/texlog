@@ -29,6 +29,9 @@ def main():
     Use the output from texcount to log how many words written on a latex document.
     Output to a simple text file that can be plotted with your favourite plotting
     software.
+    Looks for file "thesis.tex" in the directory containing texlog.py
+    
+    Output data files to "./Logging"
     """
 
     tex_file = "thesis.tex"
