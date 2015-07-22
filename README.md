@@ -1,7 +1,20 @@
 # texlog
-Use the output from texcount to log how many words written on a latex document.
+Log the 'texcount' wordcount output from your tex files.
+
 Outputs to simple text files that can be plotted with your favourite plotting
 software.
+
+Data extracted from texcount:
+
+	Date
+	Included file
+	Encoding
+	Words in text
+	Words in headers
+	Words outside text (captions etc.)
+	Number of headers
+	Number of floats/tables/figures
+	Number of math inlines,Number of math displayed
 
 # Requirements
 
@@ -23,17 +36,7 @@ The output is a series of text files for each of the consituent files of the tex
 Output to: 
 	<tex_file_directory>/Logging/<tex_file_name>/
 
-Data extracted from texcount:
 
-	Date
-	Included file
-	Encoding
-	Words in text
-	Words in headers
-	Words outside text (captions etc.)
-	Number of headers
-	Number of floats/tables/figures
-	Number of math inlines,Number of math displayed
 
 # Todo
 - Further integration with thesisplotter.py to plot the output of the thesis.
