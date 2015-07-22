@@ -24,7 +24,7 @@ For texlog to work, you have to be able to run this:
 
 and have it run with out errors.
 
-If you're using Windows, texcount is installed with Miktex.
+For information about installing texcount, see http://app.uio.no/ifi/texcount/howto.html
 
 # Usage 
 
