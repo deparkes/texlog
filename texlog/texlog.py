@@ -32,26 +32,26 @@ def main():
     Output to a simple text file that can be plotted with your favourite plotting
     software.
     Looks for file "thesis.tex" in the directory containing texlog.py
- 
+
     Output data files to "./Logging"
     """
     parser = argparse.ArgumentParser(description='Log word count of tex files.')
     parser.add_argument('tex_file', nargs='?', default="thesis.tex", action='store',
                        help='Target tex file (default = thesis.tex)')
-    parser.add_argument('--log', dest='output_folder', default="./Logging", 
-                        help='specify output directory (default = INPUT_FOLDER/Logging)')
-    parser.add_argument('--dir', dest='input_folder', 
-                        default=os.path.dirname(os.path.realpath(__file__)), 
-                        help='specify input directory (default = current directory)')                        
+                        
     args = vars(parser.parse_args())
     tex_file = args['tex_file']
-    folder = args['input_folder']
-    output_folder = args['output_folder']
-
+    folder = os.path.dirname(os.path.realpath(tex_file))
+        
+    #os.path.dirname(os.path.realpath(__file__)
     os.chdir(folder)
-
+    
+    output_folder = os.path.abspath(folder + '/' + "Logging" + '/' +
+        os.path.splitext(os.path.basename(tex_file))[0])
+    print("Output To: " + output_folder)
+    
     if not os.path.exists(output_folder):
-        os.mkdir(output_folder)
+        os.makedirs(output_folder)
 
     logger(folder, tex_file, output_folder)
 
@@ -76,7 +76,7 @@ class Section(object):
         values = [self.time_stamp]
         for line in self.data:
             try:
-                (heading, value) = line.split(':')
+                (heading, value) = line.split(':', 1)
                 print heading
                 headers.append(heading.replace(',', ''))
                 values.append(value)
@@ -142,7 +142,12 @@ def get_tex_total(countfile):
 
         if "File(s) total:" in line.strip()[:20]:
             extract_total = True
-            (label, filename) = line.split(':')
+            print("split" + line.split(':', 1)[0])
+            print("split" + line.split(':', 1)[1])
+
+            (label, filename) = line.split(':', 1)
+            #print("problem with line" + line.strip()[:20])
+                
             filename = 'Total'
             extract_section = Section(filename)
 #            print ExtractSection.filename
