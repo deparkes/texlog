@@ -18,7 +18,7 @@ Data extracted from texcount:
 
 # Requirements
 
-For texlog to work, you have to be able to type 
+For texlog to work, you have to be able to run this: 
 
 	'texcount -inc thesis.tex'
 
