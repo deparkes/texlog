@@ -36,13 +36,13 @@ def main():
     Output data files to "./Logging"
     """
     parser = argparse.ArgumentParser(description='Log word count of tex files.')
-    parser.add_argument('tex_file', nargs='?', default="thesis.tex", action='store',
-                       help='Target tex file (default = thesis.tex)')
-                        
-    args = vars(parser.parse_args())
-    tex_file = args['tex_file']
+    parser.add_argument('tex_file', nargs='?', help='Target tex file', action="store")
+                     
+    args = parser.parse_args()
+    tex_file = args.tex_file
     folder = os.path.dirname(os.path.realpath(tex_file))
-        
+    print("folder is: " + folder)
+    #print("tex_file is: " + tex_file)    
     #os.path.dirname(os.path.realpath(__file__)
     os.chdir(folder)
     
@@ -92,11 +92,10 @@ def run_texcount(folder, texfile):
     """
     texcount = []
 
-    print os.getcwd()
     tex_count_command = "texcount -inc " + texfile
     print "Running: ", tex_count_command
 #    subprocess.call(tex_count_command, shell=True)
-    proc = subprocess.Popen(tex_count_command, stdout=subprocess.PIPE)
+    proc = subprocess.Popen(tex_count_command, stdout=subprocess.PIPE, shell=True)
     while True:
         line = proc.stdout.readline()
         if line != '':
@@ -119,6 +118,7 @@ def get_tex_total(countfile):
 #    with open(countfile) as input_data:
     # Skips text before the beginning of the interesting block:
     for line in countfile:
+        print("Current line: " + line)
 #        print line
 #        type(line)
 #       Only some output lines are relevant. We have to treat the total words
@@ -161,7 +161,29 @@ def get_tex_total(countfile):
             extract_total = False
             files_total_line_limit = 0
             extract_list.append(extract_section)
+# Work-around for single-file documents            
+        if "File:" in line.strip()[:20]:
+            extract_total = True
+            print("split" + line.split(':', 1)[0])
+            print("split" + line.split(':', 1)[1])
 
+            (label, filename) = line.split(':', 1)
+            #print("problem with line" + line.strip()[:20])
+                
+            filename = 'RootFile'
+            extract_section = Section(filename)
+#            print ExtractSection.filename
+        if extract_total:
+#            print line
+#           Line is extracted to Section object
+            extract_section.data.append(line.strip())
+            files_total_line_limit += 1
+#       Keep going until you reach the end of the headers/data for that section
+        if files_total_line_limit > 8:
+            extract_total = False
+            files_total_line_limit = 0
+            extract_list.append(extract_section)            
+# Need to add case for there being no included files
     return extract_list
 
 def logger(folder, tex_file, output_folder):
@@ -169,7 +191,9 @@ def logger(folder, tex_file, output_folder):
     Lists the sections of your document that have been found and word-counted
     by texcount. Saves output to txt file with the same name as section.
     """
+    print("run_texcount")
     texcount = run_texcount(folder, tex_file)
+    print("get_tex_total")
     extract_list = get_tex_total(texcount)
 
     print "Sections found:"
