@@ -17,7 +17,6 @@ Data extracted from texcount:
 	Number of math inlines,Number of math displayed
 
 # Requirements
-
 For texlog to work, you have to be able to run this: 
 
 	'texcount -inc thesis.tex'
@@ -25,6 +24,9 @@ For texlog to work, you have to be able to run this:
 and have it run with out errors.
 
 For information about installing texcount, see http://app.uio.no/ifi/texcount/howto.html
+
+If you have trouble running the script on windows, you may need to change some registry settings to allow python to accept command line arguments:
+http://stackoverflow.com/questions/1934675/how-to-execute-python-scripts-in-windows
 
 # Usage 
 
