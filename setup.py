@@ -1,7 +1,11 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Jul 21 12:16:00 2015
+from setuptools import setup
 
-@author: ppxdep
-"""
-
+setup(name='texlog',
+      version='0.2.0',
+      description='Log the wordcount of tex files',
+      url='https://github.com/deparkes/texcount',
+      author='deparkes',
+      author_email='deparkes@deparkes.co.uk',
+      license='GPL',
+      packages=['texlog'],
+      zip_safe=False)
