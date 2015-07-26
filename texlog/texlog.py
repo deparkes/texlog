@@ -39,16 +39,18 @@ def main():
     parser.add_argument('tex_file', nargs='?', help='Target tex file', action="store")
                      
     args = parser.parse_args()
+
     tex_file = args.tex_file
+
     folder = os.path.dirname(os.path.realpath(tex_file))
-    print("folder is: " + folder)
+    #print("folder is: " + folder)
     #print("tex_file is: " + tex_file)    
     #os.path.dirname(os.path.realpath(__file__)
     os.chdir(folder)
     
     output_folder = os.path.abspath(folder + '/' + "Logging" + '/' +
         os.path.splitext(os.path.basename(tex_file))[0])
-    print("Output To: " + output_folder)
+    #print("Output To: " + output_folder)
     
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
@@ -114,12 +116,12 @@ def get_tex_total(countfile):
     files_total_line_limit = 0
     extract_included = False
     extract_total = False
+    extract_root = False
     extract_list = []
 #    with open(countfile) as input_data:
     # Skips text before the beginning of the interesting block:
     for line in countfile:
-        print("Current line: " + line)
-#        print line
+        print line
 #        type(line)
 #       Only some output lines are relevant. We have to treat the total words
 #       as a special case.
@@ -142,8 +144,8 @@ def get_tex_total(countfile):
 
         if "File(s) total:" in line.strip()[:20]:
             extract_total = True
-            print("split" + line.split(':', 1)[0])
-            print("split" + line.split(':', 1)[1])
+            #print("split" + line.split(':', 1)[0])
+            #print("split" + line.split(':', 1)[1])
 
             (label, filename) = line.split(':', 1)
             #print("problem with line" + line.strip()[:20])
@@ -163,9 +165,9 @@ def get_tex_total(countfile):
             extract_list.append(extract_section)
 # Work-around for single-file documents            
         if "File:" in line.strip()[:20]:
-            extract_total = True
-            print("split" + line.split(':', 1)[0])
-            print("split" + line.split(':', 1)[1])
+            extract_root = True
+            #print("split" + line.split(':', 1)[0])
+            #print("split" + line.split(':', 1)[1])
 
             (label, filename) = line.split(':', 1)
             #print("problem with line" + line.strip()[:20])
@@ -173,14 +175,14 @@ def get_tex_total(countfile):
             filename = 'RootFile'
             extract_section = Section(filename)
 #            print ExtractSection.filename
-        if extract_total:
+        if extract_root:
 #            print line
 #           Line is extracted to Section object
             extract_section.data.append(line.strip())
             files_total_line_limit += 1
 #       Keep going until you reach the end of the headers/data for that section
         if files_total_line_limit > 8:
-            extract_total = False
+            extract_root = False
             files_total_line_limit = 0
             extract_list.append(extract_section)            
 # Need to add case for there being no included files
@@ -191,9 +193,7 @@ def logger(folder, tex_file, output_folder):
     Lists the sections of your document that have been found and word-counted
     by texcount. Saves output to txt file with the same name as section.
     """
-    print("run_texcount")
     texcount = run_texcount(folder, tex_file)
-    print("get_tex_total")
     extract_list = get_tex_total(texcount)
 
     print "Sections found:"
