@@ -42,10 +42,10 @@ def main():
     """
     parser = argparse.ArgumentParser(description='Log word count of tex files.')
     parser.add_argument('tex_file', nargs='?', help='Target tex file', action="store")
-    
-    try:    
+
+    try:
 # First try to read the file name from the arguments
-# This can pose a problem in windows, especially                 
+# This can pose a problem in windows, especially
         args = parser.parse_args()
 
         tex_file = args.tex_file
@@ -54,36 +54,40 @@ def main():
         # filenames.
         len(tex_file)
     except:
-          tex_file = create_config()      
+        tex_file = create_config()
 
     folder = os.path.dirname(os.path.realpath(tex_file))
     #print("folder is: " + folder)
-    #print("tex_file is: " + tex_file)    
+    #print("tex_file is: " + tex_file)
     #os.path.dirname(os.path.realpath(__file__))
     os.chdir(folder)
-    
+
     output_folder = os.path.abspath(folder + '/' + "Logging" + '/' +
-        os.path.splitext(os.path.basename(tex_file))[0])
+                                    os.path.splitext(os.path.basename(tex_file))[0])
     #print("Output To: " + output_folder)
-    
+
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
-    
 
     logger(folder, tex_file, output_folder)
 
 
 def create_config():
-# If there are problems with reading the file from the commandline ask the user
-# if they want to create a file to store the target file in.
+    """
+    If there are problems with reading the file from the commandline ask the 
+    user if they want to create a file to store the target file in.
+    Output the name of the file they type in.
+    Save the file name to a config file.
+    """
+
     print("There was a problem reading the file from the command line")
-    print("Attempting to load file from config file")        
-    config_parse = configparser.SafeConfigParser() 
+    print("Attempting to load file from config file")
+    config_parse = configparser.SafeConfigParser()
     try:
         # Attempt to make ini file in the texlog folder
         texlog_dir = os.path.expanduser("~") + '/' + 'texlog'
         if not os.path.exists(texlog_dir):
-            os.makedirs(texlog_dir) 
+            os.makedirs(texlog_dir)
 
         ini_file = texlog_dir + '/' + 'texlog.ini'
         print("config file created in your home/my documents folder")
@@ -91,11 +95,11 @@ def create_config():
         # If there's a problem, put the file in the directory it was run from
         ini_file = 'texlog.ini'
         print("config file created in current directory")
-    
+
     load_file_ok = False
     while not load_file_ok:
         try:
-            # Try to read file from config file            
+            # Try to read file from config file
             config_parse.read(ini_file)
             tex_file = config_parse.get('texlog', 'tex_file')
             print("Loaded file: " + tex_file)
@@ -110,9 +114,9 @@ def create_config():
                 config_parse.set('texlog', 'tex_file', tex_file)
                 config_parse.write(config_file)
                 print(config_parse.get('texlog', 'tex_file'))
-    
+
     return tex_file
-    
+
 class Section(object):
     """
     Your tex file may be comprised of different sections and chapters.
@@ -205,7 +209,7 @@ def get_tex_total(countfile):
 
             (label, filename) = line.split(':', 1)
             #print("problem with line" + line.strip()[:20])
-                
+
             filename = 'Total'
             extract_section = Section(filename)
 #            print ExtractSection.filename
@@ -219,7 +223,7 @@ def get_tex_total(countfile):
             extract_total = False
             files_total_line_limit = 0
             extract_list.append(extract_section)
-# Work-around for single-file documents            
+# Work-around for single-file documents      
         if "File:" in line.strip()[:20]:
             extract_root = True
             #print("split" + line.split(':', 1)[0])
@@ -227,7 +231,7 @@ def get_tex_total(countfile):
 
             (label, filename) = line.split(':', 1)
             #print("problem with line" + line.strip()[:20])
-                
+
             filename = 'RootFile'
             extract_section = Section(filename)
 #            print ExtractSection.filename
@@ -240,7 +244,7 @@ def get_tex_total(countfile):
         if files_total_line_limit > 8:
             extract_root = False
             files_total_line_limit = 0
-            extract_list.append(extract_section)            
+            extract_list.append(extract_section) 
 # Need to add case for there being no included files
     return extract_list
 
