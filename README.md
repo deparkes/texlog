@@ -50,12 +50,24 @@ keys to:
 	 "C:\Python26\python26.exe" "%1" %*
 
 [More information about registry keys](http://stackoverflow.com/questions/1934675/how-to-execute-python-scripts-in-windows)
+### Using Config Files
+If you do have problems with command line arguments texlog will give you the option to create a configuration file containing the name of the tex file you wish to log.
+
+The configuration file will be created in your 'home' or 'my documents' folder as
+	
+	home/texlog/texlog.ini
+
+The configuration file looks like this:
+
+	[texlog]
+	tex_file = YourTextFile.tex
+
+Edit the 'YourTextFile.tex' to your tex file - either the file name or full path, depending on where you run texlog from.
 
 # Usage
 The default usage is:
 
 	texlog.py tex_file.tex
-
 
 The output is a series of text files for each of the consituent files of the tex document, and the total for the whole document.
 
