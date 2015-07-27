@@ -24,7 +24,12 @@ from datetime import datetime
 import os
 import subprocess
 import argparse
-import ConfigParser
+import sys
+if sys.version_info[0] == 2:
+    import ConfigParser as configparser
+else:
+    import configparser as configparser
+
 
 def main():
     """
@@ -37,15 +42,24 @@ def main():
     """
     parser = argparse.ArgumentParser(description='Log word count of tex files.')
     parser.add_argument('tex_file', nargs='?', help='Target tex file', action="store")
-                     
-    args = parser.parse_args()
+    
+    try:    
+# First try to read the file name from the arguments
+# This can pose a problem in windows, especially                 
+        args = parser.parse_args()
 
-    tex_file = args.tex_file
+        tex_file = args.tex_file
+        # make sure there is something there with len()
+        # This will fail if there is the problem with windows not accepting
+        # filenames.
+        len(tex_file)
+    except:
+          tex_file = create_config()      
 
     folder = os.path.dirname(os.path.realpath(tex_file))
     #print("folder is: " + folder)
     #print("tex_file is: " + tex_file)    
-    #os.path.dirname(os.path.realpath(__file__)
+    #os.path.dirname(os.path.realpath(__file__))
     os.chdir(folder)
     
     output_folder = os.path.abspath(folder + '/' + "Logging" + '/' +
@@ -54,9 +68,51 @@ def main():
     
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
+    
 
     logger(folder, tex_file, output_folder)
 
+
+def create_config():
+# If there are problems with reading the file from the commandline ask the user
+# if they want to create a file to store the target file in.
+    print("There was a problem reading the file from the command line")
+    print("Attempting to load file from config file")        
+    config_parse = configparser.SafeConfigParser() 
+    try:
+        # Attempt to make ini file in the texlog folder
+        texlog_dir = os.path.expanduser("~") + '/' + 'texlog'
+        if not os.path.exists(texlog_dir):
+            os.makedirs(texlog_dir) 
+
+        ini_file = texlog_dir + '/' + 'texlog.ini'
+        print("config file created in your home/my documents folder")
+    except:
+        # If there's a problem, put the file in the directory it was run from
+        ini_file = 'texlog.ini'
+        print("config file created in current directory")
+    
+    load_file_ok = False
+    while not load_file_ok:
+        try:
+            # Try to read file from config file            
+            config_parse.read(ini_file)
+            tex_file = config_parse.get('texlog', 'tex_file')
+            print("Loaded file: " + tex_file)
+            load_file_ok = True
+        except:
+            # If there is a problem, create a new config file and ask for the
+            # filename to operate on
+            with open(ini_file, 'w') as config_file:
+                print("File load failed")
+                tex_file = raw_input("Type filename for texfile here: ")
+                config_parse.add_section('texlog')
+                config_parse.set('texlog', 'tex_file', tex_file)
+                config_parse.write(config_file)
+                print(config_parse.get('texlog', 'tex_file'))
+    
+    return tex_file
+    
 class Section(object):
     """
     Your tex file may be comprised of different sections and chapters.
