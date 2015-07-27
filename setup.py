@@ -8,4 +8,4 @@ setup(name='texlog',
       author_email='deparkes@deparkes.co.uk',
       license='GPL',
       packages=['texlog'],
-      zip_safe=False)
+      zip_safe=True)
