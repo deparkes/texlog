@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: texlog
-Version: 0.2.0
+Version: 0.3.0
 Summary: Log the wordcount of tex files
 Home-page: https://github.com/deparkes/texcount
 Author: deparkes

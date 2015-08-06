@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='texlog',
-      version='0.2.0',
+      version='0.3.0',
       description='Log the wordcount of tex files',
       url='https://github.com/deparkes/texcount',
       author='deparkes',
