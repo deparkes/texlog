@@ -1,8 +1,0 @@
-setup.py
-texlog/__init__.py
-texlog/texlog.py
-texlog.egg-info/PKG-INFO
-texlog.egg-info/SOURCES.txt
-texlog.egg-info/dependency_links.txt
-texlog.egg-info/top_level.txt
-texlog.egg-info/zip-safe
