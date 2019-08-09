@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='texlog',
       version='0.3.0',
@@ -7,5 +7,6 @@ setup(name='texlog',
       author='deparkes',
       author_email='deparkes@deparkes.co.uk',
       license='GPL',
-      packages=['texlog'],
+      packages=find_packages(exclude=['tests', 'dist']),
+      tests_require=['pytest', 'pytest-cov'],
       zip_safe=True)
