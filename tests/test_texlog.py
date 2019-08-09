@@ -1,3 +1,5 @@
-import sys
+import unittest
 from src.texlog import texlog
-def TestSession
+class TestSection(unittest.TestCase):
+    def test_init(self):
+        section = texlog.Section('filename')
