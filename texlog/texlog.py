@@ -25,10 +25,7 @@ import os
 import subprocess
 import argparse
 import sys
-if sys.version_info[0] == 2:
-    import ConfigParser as configparser
-else:
-    import configparser as configparser
+import configparser as configparser
 
 
 def main():
@@ -102,18 +99,18 @@ def create_config():
             # Try to read file from config file
             config_parse.read(ini_file)
             tex_file = config_parse.get('texlog', 'tex_file')
-            print("Loaded file: " + tex_file)
+            print(("Loaded file: " + tex_file))
             load_file_ok = True
         except:
             # If there is a problem, create a new config file and ask for the
             # filename to operate on
             with open(ini_file, 'w') as config_file:
                 print("File load failed")
-                tex_file = raw_input("Type filename for texfile here: ")
+                tex_file = input("Type filename for texfile here: ")
                 config_parse.add_section('texlog')
                 config_parse.set('texlog', 'tex_file', tex_file)
                 config_parse.write(config_file)
-                print(config_parse.get('texlog', 'tex_file'))
+                print((config_parse.get('texlog', 'tex_file')))
 
     return tex_file
 
@@ -139,12 +136,12 @@ class Section(object):
         for line in self.data:
             try:
                 (heading, value) = line.split(':', 1)
-                print heading
+                print(heading)
                 headers.append(heading.replace(',', ''))
                 values.append(value)
             except Exception as problem:
-                print "Problem with ", line
-                print "Error:", problem
+                print("Problem with ", line)
+                print("Error:", problem)
         return (headers, values)
 
 def run_texcount(folder, texfile):
@@ -155,7 +152,7 @@ def run_texcount(folder, texfile):
     texcount = []
 
     tex_count_command = "texcount -inc " + texfile
-    print "Running: ", tex_count_command
+    print("Running: ", tex_count_command)
 #    subprocess.call(tex_count_command, shell=True)
     proc = subprocess.Popen(tex_count_command, stdout=subprocess.PIPE, shell=True)
     while True:
@@ -181,7 +178,7 @@ def get_tex_total(countfile):
 #    with open(countfile) as input_data:
     # Skips text before the beginning of the interesting block:
     for line in countfile:
-        print line
+        print(line)
 #        type(line)
 #       Only some output lines are relevant. We have to treat the total words
 #       as a special case.
@@ -256,9 +253,9 @@ def logger(folder, tex_file, output_folder):
     texcount = run_texcount(folder, tex_file)
     extract_list = get_tex_total(texcount)
 
-    print "Sections found:"
+    print("Sections found:")
     for section in extract_list:
-        print section.filename
+        print(section.filename)
         (headers, values) = section.get_data()
         output_file = output_folder + '/' + section.filename + '.txt'
         with open(output_file, "a") as out_file:
