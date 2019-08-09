@@ -49,3 +49,10 @@ output.txt
 # Python
 *.pyc
 *pycache*
+*.cache
+*.tox
+*.git*
+*.egg*
+
+# Pucharm
+*.idea
