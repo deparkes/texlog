@@ -45,3 +45,7 @@ Temporary Items
 output.txt
 *.tex
 *.ini
+
+# Python
+*.pyc
+*pycache*
