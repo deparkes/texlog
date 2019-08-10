@@ -1,4 +1,8 @@
-from setuptools import setup, find_packages
+from __future__ import absolute_import
+from __future__ import print_function
+
+from setuptools import setup
+from setuptools import find_packages
 
 setup(name='texlog',
       version='0.3.0',
@@ -7,6 +11,6 @@ setup(name='texlog',
       author='deparkes',
       author_email='deparkes@deparkes.co.uk',
       license='GPL',
-      packages=find_packages(exclude=['tests', 'dist']),
-      tests_require=['pytest', 'pytest-cov'],
+      packages=find_packages('src'),
+      package_dir={'': 'src'},  # Specifies that the 'root' directory for the build is 'src'
       zip_safe=True)
