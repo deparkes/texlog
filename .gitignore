@@ -53,6 +53,7 @@ output.txt
 .tox/
 *.git*
 *.egg*
+dist/
 
-# Pucharm
+# Pycharm
 *.idea
