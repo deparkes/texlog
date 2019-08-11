@@ -4,7 +4,7 @@ from freezegun import freeze_time
 
 from datetime import datetime
 import pytest
-from src.texlog import texlog
+from texlog import texlog
 
 FAKE_TIME = datetime(2020, 12, 25, 17, 5, 55)
 
